@@ -5,6 +5,8 @@ import com.login.login_system.entities.User;
 import com.login.login_system.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +15,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void registerUser(RegisterRequest request){
-        User userToSave = new User(request);
+        String encodedPassword = new BCryptPasswordEncoder().encode(request.password());
+        User userToSave = new User(request, encodedPassword);
         userRepository.save(userToSave);
     }
 

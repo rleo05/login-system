@@ -9,19 +9,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody LoginRequest request){
+        Authentication usernamePassword = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+        Authentication auth = authenticationManager.authenticate(usernamePassword);
         return ResponseEntity.ok().build();
     }
 
