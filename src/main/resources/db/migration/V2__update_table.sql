@@ -1,0 +1,2 @@
+ALTER TABLE users_tb
+ADD COLUMN role VARCHAR(255);
