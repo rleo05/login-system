@@ -31,10 +31,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     UserRole role;
 
-    public User(RegisterRequest request, String encodedPassword){
+    public User(RegisterRequest request){
         this.name = request.name();
         this.email = request.email();
-        this.password = encodedPassword;
+        this.password = request.password();
         this.role = request.role();
     }
 
