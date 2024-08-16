@@ -1,5 +1,6 @@
 package com.login.login_system.entities;
 
+import com.login.login_system.dto.RegisterRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,13 @@ public class User implements UserDetails {
     String password;
     @Enumerated(EnumType.STRING)
     UserRole role;
+
+    public User(RegisterRequest request, String encodedPassword){
+        this.name = request.name();
+        this.email = request.email();
+        this.password = encodedPassword;
+        this.role = request.role();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
