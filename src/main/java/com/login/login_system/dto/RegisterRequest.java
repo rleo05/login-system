@@ -3,6 +3,7 @@ package com.login.login_system.dto;
 import com.login.login_system.entities.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
@@ -15,6 +16,6 @@ public record RegisterRequest(
         @NotBlank(message = "Password cannot be empty or null")
         @Size(min = 8, message = "Password must contain at least 8 characters")
         String password,
-        @NotBlank(message = "Role cannot be empty or null")
+        @NotNull(message = "Role cannot be null")
         UserRole role) {
 }
