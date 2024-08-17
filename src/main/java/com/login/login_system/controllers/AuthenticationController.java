@@ -2,7 +2,10 @@ package com.login.login_system.controllers;
 
 import com.login.login_system.dto.LoginRequest;
 import com.login.login_system.dto.RegisterRequest;
+import com.login.login_system.dto.TokenResponse;
+import com.login.login_system.entities.User;
 import com.login.login_system.repositories.UserRepository;
+import com.login.login_system.services.TokenService;
 import com.login.login_system.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +23,16 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus> login(@RequestBody LoginRequest request){
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request){
         Authentication usernamePassword = new UsernamePasswordAuthenticationToken(request.email(), request.password());
-        Authentication auth = authenticationManager.authenticate(usernamePassword);
-        return ResponseEntity.ok().build();
+        Authentication authentication = authenticationManager.authenticate(usernamePassword);
+
+        String token = tokenService.generateToken((User) authentication.getPrincipal());
+
+        return ResponseEntity.ok(new TokenResponse(token));
     }
 
     @PostMapping("/register")
