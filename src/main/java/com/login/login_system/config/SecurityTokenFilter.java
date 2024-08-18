@@ -4,6 +4,7 @@ import com.login.login_system.services.TokenService;
 import com.login.login_system.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,22 +26,31 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = this.getToken(request);
-        if(token!=null){
+        if (!request.getRequestURI().equals("/api/v1/auth/register")) {
+            String token = null;
+
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals("accessToken")) {
+                        token = cookie.getValue();
+                    }
+                }
+            }
+
+            if (token == null) {
+                filterChain.doFilter(request, response);
+            }
+
             String email = tokenService.validateToken(token);
-            UserDetails user = userService.findByEmail(email);
+            if (email != null) {
+                UserDetails user = userService.findByEmail(email);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
         }
+
         filterChain.doFilter(request, response);
-    }
-
-    private String getToken(HttpServletRequest request){
-        String authorizationHeader = request.getHeader("Authorization");
-        if(authorizationHeader!=null){
-            return authorizationHeader.replace("Bearer ", "");
-        }
-        return null;
     }
 }

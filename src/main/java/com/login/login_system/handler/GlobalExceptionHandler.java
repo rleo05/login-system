@@ -1,5 +1,6 @@
 package com.login.login_system.handler;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.login.login_system.exception.ExceptionDetails;
 import com.login.login_system.exception.MethodArgumentNotValidDetails;
@@ -66,28 +67,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ExceptionDetails.builder()
                 .title("AuthenticationException")
                 .details("You are not correctly authenticated")
-                .timestamp(LocalDate.now())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .build()
-                ,HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ExceptionDetails> handlerAccessDeniedException(AccessDeniedException exception) {
-        return new ResponseEntity<>(ExceptionDetails.builder()
-                .title("AccessDeniedException")
-                .details("Access denied, role not valid")
-                .timestamp(LocalDate.now())
-                .status(HttpStatus.FORBIDDEN.value())
-                .build()
-                ,HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(JWTVerificationException.class)
-    public ResponseEntity<ExceptionDetails> handlerAccessDeniedException(JWTVerificationException exception) {
-        return new ResponseEntity<>(ExceptionDetails.builder()
-                .title("JWTVerificationException")
-                .details("Invalid JwtToken")
                 .timestamp(LocalDate.now())
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .build()

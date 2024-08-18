@@ -31,16 +31,12 @@ public class TokenService {
     }
 
     public String validateToken(String token){
-        try{
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
-            return JWT.require(algorithm)
-                    .withIssuer("login-system")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException e){
-            throw new JWTVerificationException("Exception while trying to validate token", e);
-        }
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        return JWT.require(algorithm)
+                .withIssuer("login-system")
+                .build()
+                .verify(token)
+                .getSubject();
     }
 
     private Instant getExpirationInstant(){
